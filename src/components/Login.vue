@@ -39,8 +39,8 @@
       </el-form-item>
       <el-form-item label="性别" :label-width="formLabelWidth">
         <el-radio-group v-model="form.gender">
-          <el-radio label="男"></el-radio>
-          <el-radio label="女"></el-radio>
+          <el-radio label="1">男</el-radio>
+          <el-radio label="0">女</el-radio>
         </el-radio-group>
       </el-form-item>
     </el-form>
@@ -118,7 +118,7 @@
           enable: this.form.enable,
           regTime: this.form.regTime,
           createTime: this.form.createTime,
-          updateTime: this.form.updateTime,
+          updateTime: this.form.updateTime
         }).then(successResponse => {
           if (successResponse && successResponse.status === 200) {
             this.dialogFormVisible = false
