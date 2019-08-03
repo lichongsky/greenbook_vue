@@ -18,6 +18,10 @@ export default new Router({
       path: '/index',
       name: 'Index',
       component: Index
+    },
+    {
+      path: '/',
+      redirect: '/login'
     }
 
     ]
