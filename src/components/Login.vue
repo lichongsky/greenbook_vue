@@ -24,18 +24,22 @@
     title="注册"
     :visible.sync="dialogFormVisible"
     @close="clear">
+    <div style="height:20px; margin-bottom: 20px;padding: 0px">
+      <span style="color: red;font-size: 20px">{{checkMsg}}</span>
+    </div>
     <el-form v-model="form" style="text-align: left" ref="dataForm">
       <el-form-item label="昵称" :label-width="formLabelWidth">
         <el-input v-model="form.account" autocomplete="off"></el-input>
       </el-form-item>
       <el-form-item label="用户名" :label-width="formLabelWidth">
-        <el-input v-model="form.username" autocomplete="off"></el-input>
+        <el-input v-model="form.username" autocomplete="off" type="text"
+                  maxlength="20" minlength="4" show-word-limit @blur="checkIsHaveUser"></el-input>
       </el-form-item>
       <el-form-item label="密码" :label-width="formLabelWidth">
-        <el-input v-model="form.password" autocomplete="off"></el-input>
+        <el-input v-model="form.password" autocomplete="off" show-password maxlength="20" minlength="4" show-word-limit></el-input>
       </el-form-item>
       <el-form-item label="邮箱" :label-width="formLabelWidth">
-        <el-input v-model="form.email" autocomplete="off"></el-input>
+        <el-input v-model="form.email" autocomplete="off" @blur="checkEmail"></el-input>
       </el-form-item>
       <el-form-item label="性别" :label-width="formLabelWidth">
         <el-radio-group v-model="form.gender">
@@ -78,7 +82,8 @@
           regTime: '',
           createTime: '',
           updateTime: ''
-        }
+        },
+        checkMsg: ''
       }
     },
     methods: {
@@ -101,11 +106,13 @@
           password: '',
           email: '',
           account: '',
-          gender: ''
+          gender: '',
+          checkMsg: ''
         }
       },
       registryForm() {
-        this.dialogFormVisible = true
+        this.dialogFormVisible = true,
+        this.checkMsg = ''
       },
       registry() {
         this.$axios.post('/registry', {
@@ -126,7 +133,30 @@
         }).catch(error => {
           console.log(error.response)
         });
-
+      },
+      checkIsHaveUser() {
+        this.$axios.get('/checkIsHaveUser?userName='+this.form.username).then(
+          successResponse =>{
+            if (successResponse && successResponse.data.code === 200) {
+              console.log(successResponse.data.code)
+              this.checkMsg = '用户名已存在'
+            }else{
+              this.checkMsg = ''
+            }
+          }
+        ).catch(
+          error =>{
+            console.log(error.response)
+          }
+        )
+      },
+      checkEmail() {
+        var reg = new RegExp("^[a-z0-9]+([._\\-]*[a-z0-9])*@([a-z0-9]+[-a-z0-9]*[a-z0-9]+.){1,63}[a-z0-9]+$"); //正则表达式
+        if(!reg.test(this.form.email)){
+          this.checkMsg = '邮箱不合法'
+        }else{
+          this.checkMsg = ''
+        }
       }
     }
   }
